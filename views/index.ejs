@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Chatroom</title>
+		<link rel="stylesheet" href="/styles.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+	    <script type ="text/javascript">
+	        $(document).ready(function (){
+	            // this triggers the connection event in our server!
+	            var socket = io.connect();
+	            // we'll write all the socket stuff after the above line!
+	            var name;
+
+	            var scrollDown = function() {
+	            	$('#content').animate({scrollTop: $('#content').get(0).scrollHeight}, 1);
+	            };
+
+	            $('#submit_button').click(function (){
+	            	name = $('#username').val();
+	                socket.emit("get_new_user", {name: name, id: socket.id});
+	                $('#wrapper').css("display", "none");
+	                $('#chatroom').css("display", "block");
+	                return false;
+	            });
+
+	            socket.on('new_user', function (data){
+	            	console.log(data.name);
+	                $('#content').append('<p class="content_message">' + data.name + ' has joined the chat group</p>');
+	                scrollDown();
+	            });
+
+	            socket.on('get_all_messages', function (data){
+	            	for (var i = 0; i < data.length; i ++) {
+	            		$('#content').append('<p class="content_message">' + data[i].name + ': ' + data[i].message + '</p>');
+	            	};
+	            	scrollDown();
+	            });
+
+	            $('#new_message_button').click(function (){
+	            	var new_message = $('#new_message').val();
+	                socket.emit("get_new_message", {message: new_message, name: name});
+	                return false;
+	            });
+
+	            socket.on('new_message', function (data){
+	            	console.log(data.name + " just submitted a message, and we recieved it again back in the ejs file");
+	                $('#content').append('<p class="content_message">' + data.name + ': ' + data.message + '</p>');
+	                $('#new_message').val("");
+	                scrollDown();
+	            });
+
+	            $('#deactivate').click(function (){
+	            	socket.emit("deactivate_user", {id: socket.id})
+	            });
+
+	            socket.on('user_gone', function (data){
+	            	$('#content').append('<p class="content_message">' + data.user + ' has left the chat group</p>');
+	            });
+	        })
+	    </script>
+	</head>
+	<body>
+		<div id="wrapper">
+			<p id="name_request">What is your name?</p>
+			<form>
+				<input id="username" type="text">
+				<input id="submit_button" type="submit">
+			</form>
+		</div>
+		<div id="chatroom">
+			<p id="chat_title">Conversation Board</p>
+			<form>
+				<input type="submit" id="deactivate" value="Deactivate">
+			</form>
+			<div id="content">
+
+			</div>
+			<form>
+				<input id="new_message" type="text" placeholder="Type a new message here...">
+				<input id="new_message_button" type="submit">
+			</form>
+		</div>
+	</body>
+</html>

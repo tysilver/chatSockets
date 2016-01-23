@@ -1,0 +1,50 @@
+#wrapper {
+	margin: auto;
+	width: 350px;
+	color: green;
+	border: 2px solid black;
+	padding: 20px 0px;
+}
+
+	#name_request {
+		margin-left: 110px;
+	}
+
+	form input {
+		display: block;
+		margin:auto;
+	}
+#chatroom {
+	display: none;
+	margin: auto;
+	width: 750px;
+}
+
+	#chat_title {
+		text-decoration: underline;
+		font-weight: bold;
+		display: inline-block;
+	}
+
+	#content {
+		height: 500px;
+		width: 750px;
+		border: 2px solid black;
+		margin: auto;
+		overflow: scroll;
+	}
+
+	#new_message {
+		width: 750px;
+		border: 1px solid black;
+		margin-top: 10px;
+	}
+
+	#new_message_button {
+		display: none;
+	}
+
+	.content_message {
+		margin-left: 20px;
+		margin-right: 20px;
+	}
